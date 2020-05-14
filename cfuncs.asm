@@ -4,33 +4,36 @@
 org 100h
 
 start:
-
+	inc [counter]
 	mov di, offset str1
 	mov al, 'e'
 	mov cx, 7d
 	call memchr
 	cmp al, [di]	
-	jne exit
-
+	jne error_exit
 	
+
+	inc [counter]
 	mov di, offset str3
 	mov al, 'b'
 	mov cx, 5d
 	call memset
 	cmp [str3 + 4], 'b'
-	jne exit
+	jne error_exit
 	cmp [str3 + 5], 'a'
-	jne exit
+	jne error_exit
 	
 	
+	inc [counter]
 	mov di, offset str1
 	mov si, offset str2
 	mov cx, 6d
 	call memcmp
 	cmp al, 'w' - 'h'
-	jne exit
+	jne error_exit
 	
 	
+	inc [counter]
 	mov di, offset str3
 	mov si, offset str1
 	mov cx, 10d
@@ -40,57 +43,54 @@ start:
 	mov cx, 10d
 	call memcmp
 	cmp al, 0
-	jne exit
+	jne error_exit
 	
 	
-	
+	inc [counter]
 	mov di, offset str1
 	call strlen
 	cmp cx, 10d
-	jne exit
+	jne error_exit
 	
 	
-	
+	inc [counter]
 	mov di, offset str1
 	mov al, 'w'
 	call strchr
 	cmp [si], al
-	jne exit
+	jne error_exit
 	
 	
-	
+	inc [counter]
 	mov di, offset str1
 	mov al, 'e'
 	call strrchr
 	cmp [si], al
-	jne exit
+	jne error_exit
 	
 
-	
+	inc [counter]
 	mov di, offset str1
 	mov si, offset str2
 	call strcmp
 	cmp cx, 'w' - 'h'
-	jne exit
+	jne error_exit
 	
 
-	mov ah, 02h
-    mov dl, 'o'
-    int 21h
-	mov ah, 02h
-    mov dl, 'k'
-    int 21h
+	mov ah, 09h
+	mov dx, offset ok_msg
+	int 21h
+	
 	mov ax, 4c00h
 	int 21h	
 	
 
-	exit:
-	mov ah, 02h
-    mov dl, 'n'
-    int 21h
-	mov ah, 02h
-    mov dl, 'o'
-    int 21h
+	error_exit:
+	mov al, [counter]
+	mov [err_msg + counter_pos], al
+	mov ah, 09h
+	mov dx, offset err_msg
+	int 21h
 	mov ax, 4c00h
 	int 21h
 
@@ -112,15 +112,14 @@ memchr:
 ;------------------------------------------
 ;memset
 ;Parameters:
-;	bx - offset of mem
+;	di - offset of mem
 ;	al - char
 ; 	cx - count
-;Returns: bx - offset of mem
-;Destroyed: cx, di, bx
+;Returns: di - offset of mem
+;Destroyed: cx, di
 ;------------------------------------------	
 memset:	
 	cld
-	mov bx, di
 	rep stosb
 	
 	ret
@@ -178,12 +177,10 @@ memcmp:
 strlen:
 		xor cx, cx
 		not cx
-		xor ax, ax
+		xor al, al
 		cld
 		repne scasb
-		not ax
-		sub ax, cx
-		mov cx, ax
+		not cx
 		dec cx
 		ret
 		
@@ -277,6 +274,12 @@ str1 db 'helloworld', 0h
 str2 db 'hellohello', 0h
 str3 db 'aaaaaaaaaa', 0h
 str_len equ 10d
+
+
+ok_msg db 'unit tests complete$'
+err_msg db 'error in function number x$'
+counter_pos equ 25
+counter db '0';
 	
 end start
 

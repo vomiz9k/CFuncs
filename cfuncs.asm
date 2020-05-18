@@ -249,20 +249,18 @@ strrchr:
 ;Destroyed: di, si, ax, bx
 ;------------------------------------------	
 strcmp:
-		mov al, [si]
+		cld
 	strcmp_loop:
-		cmp [di], al
+		lodsb
+		scasb
 		jne strcmp_end
-		inc si
-		inc di
-		mov al, [si]
 		cmp al, 0
 		jne strcmp_loop
 	
 	strcmp_end:
 		xor ch, ch
-		mov cl, [di]
-		sub cl, [si]
+		mov cl, [di - 1]
+		sub cl, [si - 1]
 		ret
 ;-------------------------------------------
 

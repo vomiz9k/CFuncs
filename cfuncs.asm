@@ -4,7 +4,7 @@
 org 100h
 
 start:
-	inc [counter]
+	inc [counter]				;testing memchr
 	mov di, offset str1
 	mov al, 'e'
 	mov cx, 7d
@@ -13,7 +13,7 @@ start:
 	jne error_exit
 	
 
-	inc [counter]
+	inc [counter]				;testing memset
 	mov di, offset str3
 	mov al, 'b'
 	mov cx, 5d
@@ -24,7 +24,7 @@ start:
 	jne error_exit
 	
 	
-	inc [counter]
+	inc [counter]				;testing memcmp
 	mov di, offset str1
 	mov si, offset str2
 	mov cx, 6d
@@ -33,35 +33,35 @@ start:
 	jne error_exit
 	
 	
-	inc [counter]
+	inc [counter]				;testing memcpy
 	mov di, offset str3
 	mov si, offset str1
-	mov cx, 10d
+	mov cx, str_len
 	call memcpy
 	mov di, offset str3
 	mov si, offset str1
-	mov cx, 10d
+	mov cx, str_len
 	call memcmp
 	cmp al, 0
 	jne error_exit
 	
 	
-	inc [counter]
+	inc [counter]				;testing strlen
 	mov di, offset str1
 	call strlen
-	cmp cx, 10d
+	cmp cx, str_len
 	jne error_exit
 	
 	
-	inc [counter]
-	mov di, offset str1
+	inc [counter]				;testing strchr
+	mov di, offset str1	
 	mov al, 'w'
 	call strchr
 	cmp [di], al
 	jne error_exit
 	
 	
-	inc [counter]
+	inc [counter]				;testing strrchr
 	mov di, offset str1
 	mov al, 'e'
 	call strrchr
@@ -69,7 +69,7 @@ start:
 	jne error_exit
 	
 
-	inc [counter]
+	inc [counter]				;testing strcmp
 	mov di, offset str1
 	mov si, offset str2
 	call strcmp

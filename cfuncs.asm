@@ -57,7 +57,7 @@ start:
 	mov di, offset str1
 	mov al, 'w'
 	call strchr
-	cmp [si], al
+	cmp [di], al
 	jne error_exit
 	
 	
@@ -65,7 +65,7 @@ start:
 	mov di, offset str1
 	mov al, 'e'
 	call strrchr
-	cmp [si], al
+	cmp [di], al
 	jne error_exit
 	
 
@@ -189,7 +189,7 @@ strlen:
 ;Parameters:
 ;	di - offset of string, al - char
 ;Returns:
-;	si - pointer of searching char(nullptr if not found)
+;	di - pointer of searching char(nullptr if not found)
 ;Destroyed: di, ax, bx
 ;------------------------------------------	
 strchr:
@@ -204,14 +204,12 @@ strchr:
 		repne scasb
 		jne not_found
 		
-		
-		mov si, di
-		dec si
+		dec di
 		ret
 
 		
 	not_found:
-		xor si, si
+		xor di, di
 		ret
 		
 ;------------------------------------------
@@ -236,11 +234,10 @@ strrchr:
 		jne rnot_found
 		
 		add di, 1
-		mov si, di
 		ret
 		
 	rnot_found:
-		xor si, si
+		xor di, di
 		ret
 		
 ;------------------------------------------
